@@ -77,9 +77,9 @@ lTime = size(downsampledData,2);
 
 % if input is bipolar channels get referential from bipolar name
 if areChNamesBipolar == 1
-    splitChNamesBipolar = split(channelNamesInput,' ');
+    splitChNamesBipolar = split(channelNamesInput,{' ','-'});
     if length(size(splitChNamesBipolar))>2 % check if it needs to traspose
-        splitChNamesBipolar = split(channelNamesInput',' ');
+        splitChNamesBipolar = split(channelNamesInput',{' ','-'});
     end
     arrChannelNames = unique(splitChNamesBipolar);
     channelNames = cell(1,length(arrChannelNames));
