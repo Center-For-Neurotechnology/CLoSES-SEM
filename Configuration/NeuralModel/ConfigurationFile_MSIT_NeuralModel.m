@@ -34,6 +34,9 @@ function [sCoreParams, variantConfig] = ConfigurationFile_MSIT_NeuralModel(sCore
 % @Rina Zelmann 2016-2018
 
 %%%%%%%%%%
+%% Type of experiment
+experimentType = 'MSIT'; % this defines the model
+
 %% Bipolar Channels -
 % We could have N (default 10) channels as long as channel1 & channel2 consist of vectors (bipolar channels are channel1[i]-channel2[i]) 
 % channel1 & channel2 are contact numbers from NSP -> change in patient specific file if you know channel number in advance - NSP2 correponds to 201and up
@@ -103,6 +106,7 @@ sCoreParams.viz.featureInds = 1:sCoreParams.decoders.txDetector.nFeatures;      
 %%%%%%%%%%
 
 %% Variants CONFIG - DO NOT CHANGE HERE
+variantConfig = selectStateModelConfig(experimentType, variantConfig, featureName);
 variantConfig = selectDetectorNeuralModelConfig(detectorType, variantConfig, featureName);
 variantConfig = selectStateEstimateOutput(stateOutput, variantConfig);
 variantConfig = selectWhenToStimulate(stimulationType, variantConfig, detectorType);

@@ -1,6 +1,5 @@
-function [sCoreParams, variantConfig, sInputData, sInputTrigger, sMultiTimeInputData, sMultiTimeInputTrigger, sRandomStimulation] = initializationScript(whatToDo, sCoreParams, freqBandName, featureName, stimulationType, detectorType, triggerType, stateOutput, contactNumbers1, contactNumbers2, triggerChannel, whatTypeSimulation, realDataFileName, variantConfig, neuralModelParams)
+function [sCoreParams, variantConfig, sInputData, sInputTrigger, sMultiTimeInputData, sMultiTimeInputTrigger, sRandomStimulation] = initializationScript(whatToDo, sCoreParams, freqBandName, featureName, stimulationType, detectorType, triggerType, experimentType, stateOutput, contactNumbers1, contactNumbers2, triggerChannel, whatTypeSimulation, realDataFileName, variantConfig, neuralModelParams)
 %Function to iniliatize simulink parameters and variants
-% it is called from initializationScriptNeuralModel
 % Inputs:
 %   
 % 1.   whatToDo: whether to simulate, compile or prepare model to run in real time
@@ -8,7 +7,7 @@ function [sCoreParams, variantConfig, sInputData, sInputTrigger, sMultiTimeInput
 %           if whatToDo = Simulation also create data for simulation
 %
 % 2. freqBandName: Name of frequency band of interest
-%       Options: THETA / ALPHA / BETA / LOWGAMMA / HIGHGAMMA / HIGHGAMMARIPPLE /RIPPLE
+%       Options: THETA / ALPHA / BETA / LOWGAMMA / HIGHGAMMA / HIGHGAMMARIPPLE /RIPPLE /LP8HIGHGAMMA
 %
 % 3. featureName: Name of Feature to compute and detect - assumes same one is used for signal and baseline - except for IED)
 %       Options: BANDPOWER / SMOOTHBANDPOWER / VARIANCEOFPOWER / COHERENCE / IED (to use Anish code)
@@ -21,6 +20,12 @@ function [sCoreParams, variantConfig, sInputData, sInputTrigger, sMultiTimeInput
 %
 % 5. triggerType: A specific trigger type could be specified to compute baseline based on EEG trigger (image onset), periodically, or after N stimulations
 %       Options: EEGDATA / FIXEDPERIOD / FOLLOWINGSTIM
+%
+% 6. experimentType: A specific EXPERIMENT could be specified which results in a specific MODEL
+%       Options: MSIT/ECR -> NEURALMODEL / CLEAR -> CLEARMDOEL
+%
+% 7. stateOutput: which state model output to use in detection (mean or bound)
+%       Options: MEAN / BOUNDLOWER / BOUNDUPPER
 %
 % 6. contactNumbers1 / contactNumbers2: Numbers of contacts in referential montage. 
 %       Combining both vectors gives bipolar channels: e.g. Ch1=contactNumbers1(1)-contactNumbers2(1)
@@ -60,6 +65,9 @@ end
 if ~exist('triggerType','var')
    triggerType = '';
 end
+if ~exist('stateModel','var')
+   stateModel = '';
+end
 if ~exist('stateOutput','var')
    stateOutput = '';
 end
@@ -76,7 +84,7 @@ if ~exist('whatTypeSimulation','var') || isempty(whatTypeSimulation)
     whatTypeSimulation = 'SINE'; %'NEV'; %'REAL';  % options are 'SINE' or 'REAL' or 'NEV'
 end
 if ~exist('realDataFileName','var') || isempty(realDataFileName)
-    realDataFileName = '../ExampleData/IIDs/P12_IIDs_stChRPH02_detChRPH01.mat'; 
+    realDataFileName = 'C:\DARPA\DATA\Simulations\SimData_WithTriggers_MG106.mat'; %'C:\DARPA\DATA\Simulations\SimData_CoherencePairs_MG88.mat';  %
 end
 
 if ~exist('variantConfig','var')
@@ -153,6 +161,10 @@ disp(['Selected STIMULATION_TYPE: ', stimulationType,' corresponds to variantCon
 %% SelectType of Trigger (to compute threshold from baseline)
 variantConfig = selectTriggerTypeConfig(triggerType, variantConfig);
 disp(['Selected TRIGGER_TYPE: ', triggerType,' corresponds to variantConfig_TRIGGER_TYPE = ', num2str(variantConfig.TRIGGER_TYPE)])
+
+%% Select state estimate MODEL (NeuralStateEstimate or CLEAR)
+variantConfig = selectStateModelConfig(experimentType, variantConfig, featureName);
+disp(['Selected Experiment: ', experimentType,' corresponds to variantConfig_STATEMODEL = ', num2str(variantConfig.STATEMODEL)])
 
 %% Select state estimate output
 variantConfig = selectStateEstimateOutput(stateOutput, variantConfig);

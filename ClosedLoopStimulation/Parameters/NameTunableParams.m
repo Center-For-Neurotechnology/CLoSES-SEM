@@ -24,7 +24,8 @@ tunableParams = {
     'sCoreParams_Features_Baseline_thresholdAboveValue'
     'sCoreParams_Features_Baseline_thresholdBelowValue'
     
-    'sCoreParams_neuralModelParams_initialXPre'
+    %'sCoreParams_neuralModelParams_initialXPre' %RIZ removed when added CLEAR -> confirm that it is not needed / if needed change model parameters to
+    %generic names
     
     %'sCoreParams_decoders_txDetector_txRMS'
     %'sCoreParams_decoders_txDetector_txRMSLower'

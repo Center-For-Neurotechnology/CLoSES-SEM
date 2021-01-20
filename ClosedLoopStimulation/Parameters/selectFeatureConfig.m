@@ -40,8 +40,14 @@ switch upper(featureName)
         variantConfig.WHICH_FEATURE_BASELINE = 7;
         variantConfig.WHICH_DETECTOR = 8; %4; - changed to neural model
         nFeatures = sCoreParams.decoders.txDetector.nFilteredChannels; % To have correct number for visualization! - RIZ: it should be improved!        case 'VARIANCEOFPOWER'
+    case 'FILTEREDANDPOWER'
+        variantConfig.WHICH_FEATURE = 8;
+        variantConfig.WHICH_FEATURE_BASELINE = 7;
+        variantConfig.WHICH_DETECTOR = 8; %4; - changed to neural model
+        nFeatures = sCoreParams.decoders.txDetector.nFilteredChannels; % To have correct number for visualization! - RIZ: it should be improved!        case 'VARIANCEOFPOWER'
         
     otherwise
+        nFeatures = sCoreParams.decoders.txDetector.nFeatures;
         disp(['No Valid Feature specified. Using default: Feat=', num2str(variantConfig.WHICH_FEATURE), ' - BaselineFeat=',num2str(variantConfig.WHICH_FEATURE_BASELINE), ' - Detector=',num2str(variantConfig.WHICH_DETECTOR) ]);
 end 
 % change based on number of frequency bands (state estimate with neural model)

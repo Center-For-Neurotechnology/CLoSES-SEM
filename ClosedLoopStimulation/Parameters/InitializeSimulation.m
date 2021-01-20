@@ -30,7 +30,7 @@ switch upper(whatTypeSimulation)
         disp('Creating data for Simulation')
         %Change config for simulation!
         sCoreParams.core.NumberNSPs = 1;
-        sCoreParams.core.maxChannelsAllNSPs = 7; % 5 EEG (4 channels) + baseline trigger + stim trigger
+        sCoreParams.core.maxChannelsAllNSPs = 7; % 6 EEG (5 channels) + baseline trigger / stim trigger
         sCoreParams.core.maxChannelsTriggers = sCoreParams.core.maxChannelsAllNSPs; % Same in both
         if (sCoreParams.decoders.txDetector.nChannels > sCoreParams.core.maxChannelsAllNSPs)
             sCoreParams.decoders.txDetector.channel1 = [1: (sCoreParams.core.maxChannelsAllNSPs-3)]; %[1:sCoreParams.core.maxChannelsAllNSPs-1]; %[1 2];
@@ -42,8 +42,8 @@ switch upper(whatTypeSimulation)
             sCoreParams.decoders.txDetector.nFeatures = sCoreParams.decoders.txDetector.nChannels;  % Change to nPairs if using COHERENCE! see how to do in real time!!
         end
         sCoreParams.decoders.txDetector.channelNames = cellfun(@num2str,num2cell(1:sCoreParams.core.maxChannelsAllNSPs),'UniformOutput',false);
-        sCoreParams.decoders.txDetector.triggerChannel = 7; %sCoreParams.core.maxChannelsAllNSPs;
-        sCoreParams.decoders.txDetector.stimTriggerChannel = 7; %sCoreParams.decoders.txDetector.triggerChannel; %For Simulation - use same trigger for image onset and stim trigger
+        sCoreParams.decoders.txDetector.triggerChannel = sCoreParams.core.maxChannelsAllNSPs;
+        sCoreParams.decoders.txDetector.stimTriggerChannel = sCoreParams.decoders.txDetector.triggerChannel; %For Simulation - use same trigger for image onset and stim trigger
         sCoreParams.stimulator.startupTimeSec = 1;
         sCoreParams.triggerThresholdValue = 0.1;    %For simulation trigger value is 1 - for real -closed loop with input from decider is ~2000
         sCoreParams = InitCoreParams_Dependent(sCoreParams);

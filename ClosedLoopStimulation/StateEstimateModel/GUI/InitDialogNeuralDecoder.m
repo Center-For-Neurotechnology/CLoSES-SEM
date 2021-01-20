@@ -140,7 +140,7 @@ function varargout = InitDialogNeuralDecoder_OutputFcn(hObject, eventdata, handl
     if ~isempty(handles)
         varargout{1} = handles.output;
         varargout{2} = get(handles.txtModelFileName,'String');
-        varargout{3} = handles.experimentType; %MSIT or ECR or continuous
+        varargout{3} = handles.experimentType; %MSIT or ECR or continuous or CLEAR
         varargout{4} = get(handles.txtConfigFileName,'String');
         varargout{5} = get(handles.txtSimulationFileName,'String');
         varargout{6} = get(handles.txtNeuralModelFileName,'String');

@@ -37,6 +37,8 @@ function [sCoreParams, variantConfig] = ConfigurationFile_ECR_NeuralModel(sCoreP
 % @Rina Zelmann 2016-2018
 
 %%%%%%%%%%
+%% Type of experiment
+experimentType = 'ECR'; % this defines the model
 
 %% Bipolar Channels -
 % We could have N (default 10) channels as long as channel1 & channel2 consist of vectors (bipolar channels are channel1[i]-channel2[i]) 
@@ -112,6 +114,7 @@ sCoreParams.viz.channelInds = 1:sCoreParams.decoders.txDetector.nChannels;      
 sCoreParams.viz.featureInds = 1:sCoreParams.decoders.txDetector.nFeatures;      %All Features -  pairs for coherence!
 
 %% Variants CONFIG - DO NOT CHANGE HERE
+variantConfig = selectStateModelConfig(experimentType, variantConfig, featureName);
 variantConfig = selectDetectorNeuralModelConfig(detectorType, variantConfig, featureName);
 variantConfig = selectStateEstimateOutput(stateOutput, variantConfig);
 variantConfig = selectWhenToStimulate(stimulationType, variantConfig, detectorType);

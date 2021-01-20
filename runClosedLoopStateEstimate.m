@@ -6,6 +6,7 @@ if ~exist('patientNAME','var'), patientNAME = 'testCLoSES-SEM'; end
 %% Add to Path
 addpath(genpath('ClosedLoopStimulation'))
 addpath(genpath('Decoder_Encoder_Model_MultipleTrajectory'))
+addpath(genpath('Models\CLEAR\Model'))
 
 
 %% RUN Closed-Loop GUI

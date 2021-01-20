@@ -64,6 +64,7 @@ neuralModelParams.modelType = 2; % modelType: 1= Gamma / 2=Normal (original "mod
 neuralModelParams.TransP = TransP;
 neuralModelParams.Xs = modelInfo.Xs;
 neuralModelParams.dValid = modelInfo.dValid;
+
 % Instead of dParam that is a cell (not accepted) - we divide it into the needed vectors ad structures
 dParam = [modelInfo.eParam{:}];
 neuralModelParams.Param_W = zeros(length(dParam),3);

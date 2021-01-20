@@ -40,6 +40,7 @@ variantParams.FILTER.FIR_EXTERNAL = Simulink.Variant('variantConfig_FREQ_LOW == 
 variantParams.FILTER.ALLPASS = Simulink.Variant('variantConfig_FREQ_LOW == 0'); % Do NOT filter -> simply pass raw EEG data
 
 variantParams.FILTER.MANYFREQS.THETAALPHAGAMMA  = Simulink.Variant('variantConfig_FREQ_LOW == 4865200 && variantConfig_FILTER_TYPE == 2'); % for state estimate model we need 3 freqs
+variantParams.FILTER.MANYFREQS.LP7HIGHGAMMA= Simulink.Variant('variantConfig_FREQ_LOW == 765 && variantConfig_FILTER_TYPE == 2');
 
 %Sampling Rate (needed beacuse filters MUST have FIXED sampling rates)
 variantParams.SAMPLING.FS1000 = Simulink.Variant('variantConfig_SAMPLINGRATE == 1000');
@@ -53,6 +54,7 @@ variantParams.FEATURE.VARIANCEOFPOWER = Simulink.Variant('variantConfig_WHICH_FE
 variantParams.FEATURE.COHERENCE = Simulink.Variant('variantConfig_WHICH_FEATURE == 5');
 variantParams.FEATURE.CORRELATION = Simulink.Variant('variantConfig_WHICH_FEATURE == 6');
 variantParams.FEATURE.LOGBANDPOWER = Simulink.Variant('variantConfig_WHICH_FEATURE == 7');
+variantParams.FEATURE.FILTEREDANDPOWER = Simulink.Variant('variantConfig_WHICH_FEATURE == 8');
 
 %Features Baseline
 variantParams.FEATURE.BASELINE.WEIGHTEDTIMEPOWER = Simulink.Variant('variantConfig_WHICH_FEATURE_BASELINE == 1'); %Almost the same as WEIGHTEDPOWER
@@ -94,8 +96,9 @@ variantParams.STATEOUTPUT.MEAN = Simulink.Variant('variantConfig_STATEOUTPUT == 
 variantParams.STATEOUTPUT.UPPERBOUND = Simulink.Variant('variantConfig_STATEOUTPUT == 2');  % Upper bound estimate is used in MSIT
 variantParams.STATEOUTPUT.LOWERBOUND = Simulink.Variant('variantConfig_STATEOUTPUT == 3');
 
-% State Estimate Model  - For now only 1
+% State Estimate Model  - Added CLEAR
 variantParams.STATEMODEL.NEURALMODEL = Simulink.Variant('variantConfig_STATEMODEL == 1');   
+variantParams.STATEMODEL.CLEARMODEL = Simulink.Variant('variantConfig_STATEMODEL == 2');   
 
 %Config
 IS_BIPOLAR = 1;

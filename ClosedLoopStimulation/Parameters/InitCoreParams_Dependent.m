@@ -35,6 +35,7 @@ sCoreParams.decoders.txDetector.delayAfterStimSteps = sCoreParams.decoders.txDet
 if (max([sCoreParams.decoders.txDetector.channel1,sCoreParams.decoders.txDetector.channel2])<=length(sCoreParams.decoders.txDetector.channelNames))
     sCoreParams.decoders.txDetector.bipolarChannelNames = [sCoreParams.decoders.txDetector.channelNames(sCoreParams.decoders.txDetector.channel1)' ,sCoreParams.decoders.txDetector.channelNames(sCoreParams.decoders.txDetector.channel2)' ];
 end
+
 %sCoreParams.write.maxSignalsPerStep = 9 + 2 * sCoreParams.viz.nFeatures + 2 * sCoreParams.viz.nChannels; %MAX # of UDP matrix size received: 7 1D vectors +2 stimChannel + 2* number of Features (Channels/Pairs) + 2* number of channels
 sCoreParams.write.maxContinuousSignalsPerStep = 9 + sCoreParams.viz.nChannels; %MAX # of UDP matrix size received: 7 1D vectors +2 stimChannel  + 1* number of channels (only raw EEG)
 sCoreParams.write.maxTrialByTrialDataPerStep = 10 +  sCoreParams.viz.nFeatures + 2;      %MAX # of UDP matrix size received: 4 1D vectors + 3 state estimate + 2 stimChannel + 1* number of Features (Channels/Pairs)+ 2 Thresholds (above/below) for state 

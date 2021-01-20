@@ -6,7 +6,7 @@ sCoreParams.core.NumberNSPs = 2;% USE only 1 for DEMO! 2;            % Number of
 sCoreParams.core.numChannelsPerNSPs = 200;
 sCoreParams.core.maxChannelsAllNSPs = sCoreParams.core.numChannelsPerNSPs * sCoreParams.core.NumberNSPs;   % max number of NSP channels (considering both NSPs)
 sCoreParams.core.samplingRate = 2000;       % sampling rate of NSP  
-sCoreParams.write.broadcastSec = 0.1;        %%RIZ: reduce to try to send more channels - original: .1;     MSIT 25 ch-> 0.05   
+sCoreParams.write.broadcastSec = 0.1;        % MUST be multiple of stepPeriod / could be reduce to try to send more channels - original: .1;     MSIT 25 ch-> 0.05   
 sCoreParams.core.maxChannelsTriggers = sCoreParams.core.maxChannelsAllNSPs; % Same in both
 
 %%%%%%%%%%
@@ -72,6 +72,8 @@ sCoreParams.triggerThresholdValue = 1000; %500; % Since EEG values are in the or
 sCoreParams.decoders.txDetector.nFreqs =1;
 sCoreParams.decoders.txDetector.nFeatures = sCoreParams.decoders.txDetector.nChannels; % Change to nPairs if using COHERENCE! see how to do in real time!!
 sCoreParams.decoders.txDetector.nFeaturesUsedInDetection =  sCoreParams.decoders.txDetector.nFeatures;
+sCoreParams.decoders.txDetector.nDataPointsUsedInDetection = 1; % Deafult and Neural Model for ECR/MSIT used 1 datapoint per epoch 
+
 % Features Names
 sCoreParams.decoders.txDetector.featureNames = sCoreParams.decoders.txDetector.channelNames; % Deault is the same for features and Names - but it could be Pairs or 1 name per freq
 

@@ -144,7 +144,7 @@ end
         % UIWAIT makes GUINeuralDecoderClosedLoopConsole wait for user response (see UIRESUME)
         %uiwait(handles.figure1);
         
-        %Initialize Variables and Variants 
+        %Initialize Variables and Variants and GUI based on experiment
         initializeVariables(hObject, handles);
         handles = guidata(hObject); %Get the handles back after they were modified
         
@@ -152,12 +152,14 @@ end
         InitializeNetwork(hObject, handles);
         handles = guidata(hObject); %Get the handles back after they were modified
 
+        %Pre-Configure GUI and parameters based on experiment type
+        % RIZ: this is probably irrelevant IF we select a CONFIG file
+        configureGUIBasedOnExperimentType(hObject, [], handles, handles.experimentType);
+        handles = guidata(hObject); %Get the handles back after they were modified
+
         %Add a menu to the GUI
         set(hObject,'toolbar','figure');
              
-        %Pre-Configure GUI based on experiment type
-        configureGUIBasedOnExperimentType(hObject, eventdata, handles, experimentType);
-        handles = guidata(hObject); %Get the handles back after they were modified
 
 %         % Patient Specific Configuration - It is at the end of all the configuration to avoid being overwriten by a default value
 %         if ~isempty(handles.sCoreParamConfigFileName )
@@ -234,7 +236,7 @@ end
         switch upper(experimentType)
             case 'MSIT'
                 % Default Config is HighGamma + SmoothBandPower
-                set(handles.popFreq,'Value',12);     %5=HighGamma / 12 ThetaAlphaGamma
+                set(handles.popFreq,'Value',12);     % 12 - ThetaAlphaGamma
                 set(handles.popFeature,'Value',5);  % Changed to LOG band power - before: 1=SmoothBandPower
                 set(handles.popStimulationType,'Value',2);  %NEXT TRIAL Stimulation (as soon as it detects)
                 set(handles.popDetectorType,'Value',1);     %STATEESTIMATE detector
@@ -250,7 +252,7 @@ end
                 set(handles.popStimulationType,'Value',2);  %NEXT TRIAL Stimulation (if stim should happen in one trial -> send STIM at trigger of next trial)
                 set(handles.popDetectorType,'Value',2);     % STATEESTIMATEMULTISITE Detector
                 set(handles.popStateOutput,'Value',1);     % Use Mean State for detection
-                sCoreParams.stimulationFrequencyHz = 160;
+               sCoreParams.stimulationFrequencyHz = 160;
                 sCoreParams.stimulator.trainDuration = 400;
                 sCoreParams.stimulator.amplitude_mA = 4000;
                 handles.controlCerestimFromHost = true;     %Multisite Stim needs that the Cerestim be controlled from host computer
@@ -264,23 +266,20 @@ end
                 sCoreParams.stimulator.trainDuration = 60;  %As long as frequency and duratio are the same, it generates a SINGLE PULSE
                 sCoreParams.stimulator.amplitude_mA = 6000;
                 handles.controlCerestimFromHost = false; %For NOW only 1 channel stim! -> change afterwards
+             case 'CLEAR'   %RIZ: USES CLEAR MODEL - > specifed in neuralModelFileName
+                % Default Config is Theta + Coherence
+                set(handles.popFreq,'Value',13);     %13 - LP7 HG
+                set(handles.popFeature,'Value',6);  %FILTEREDandPOWER
+                set(handles.popStimulationType,'Value',2);  %NEXT TRIAL Stimulation (if stim should happen in one trial -> send STIM at trigger of next trial)
+                set(handles.popDetectorType,'Value',1);     % Simple Detector (called NEURALMODEL detector - this is misleading shold be changed)
+                set(handles.popStateOutput,'Value',1);     % Use Mean State for detection
+                sCoreParams.stimulationFrequencyHz = 1;
+                sCoreParams.stimulator.trainDuration = 1;
+                sCoreParams.stimulator.amplitude_mA = 0;
             otherwise
                 disp('Error in experiment Type - please configure in GUI');
         end
-%         if (patientSpecificConfig == true) % use default for experiment
-%             possibleFreqLow = [4,8,15,30,65,140,65200,80,30110,1216,0,4865200]; %Poor HACK!!
-%             possibleFeaturesInPopMenu = [3,4,5,2,7]; %Poor HACK!! Corresponds to: SmoothBandPower=3, VarianceOfPower=4, Coherence=5, IED=2, LOGBandPower
-%             possibleDetectorsInPopMenu = [1,2]; %Poor HACK!! Corresponds to: NeuralModel =1 / NeuralModel Multisite =2
-%             possibleStimTypeInPopMenu = [1,3;2,4]; %Poor HACK!! Corresponds to: CONTINUOUS: WHICH_DETECTOR={1,3} / TRIGGER: WHICH_DETECTOR={4,5} / MULTISITE: WHICH_DETECTOR={6,7}
-%             set(handles.popFreq,'Value',find(possibleFreqLow==handles.variantConfig.FREQ_LOW));
-%             set(handles.popFeature,'Value',find(possibleFeaturesInPopMenu==handles.variantConfig.WHICH_FEATURE));
-%             [row, col] = find(possibleStimTypeInPopMenu==handles.variantConfig.STIMULATION_TYPE);
-%             set(handles.popStimulationType,'Value', row);
-%             [row, col] = find(possibleDetectorsInPopMenu == handles.variantConfig.WHICH_DETECTOR);
-%             set(handles.popDetectorType,'Value', row(1));
-%             set(handles.popStateOutput,'Value',handles.variantConfig.STATEOUTPUT);  %Poor HACK!! Corresponds to: MEAN=1 / UPPERBOUND=2 / LOWERBOUND=3
-%         end
-        
+
         %Call the pop objects callbacks to update the variants
         popFreq_Callback(handles.popFreq, eventdata, handles);
         handles = guidata(handles.popFreq); %Get the handles back after they were modified
@@ -634,7 +633,7 @@ end
         
         %[neuralModelParams, variantConfig, sCoreParams] = initNeuralModelParams(handles.neuralModelFileName, handles.variant.variantConfig, sCoreParams, handles.freqBandName, handles.feature);
 
-        [sCoreParams, variantConfig,  sInputData, sInputTrigger, sMultiTimeInputData, sMultiTimeInputTrigger] = initializationScript('SIMULATION', sCoreParams, handles.freqBandName, handles.feature, handles.stimulationType, handles.detectorType, handles.triggerType, handles.stateOutput, [],[],[], handles.simulation.typeSimulation, handles.simulation.simulationFileName, handles.variant.variantConfig, handles.neuralModelParams);
+        [sCoreParams, variantConfig,  sInputData, sInputTrigger, sMultiTimeInputData, sMultiTimeInputTrigger] = initializationScript('SIMULATION', sCoreParams, handles.freqBandName, handles.feature, handles.experimentType, handles.detectorType, handles.triggerType, handles.experimentType , handles.stateOutput, [],[],[], handles.simulation.typeSimulation, handles.simulation.simulationFileName, handles.variant.variantConfig, handles.neuralModelParams);
 
         % Patient Specific Configuration - It is at the end of all the configuration to avoid being overwriten by a default value
         if ~isempty(handles.sCoreParamConfigFileName )
@@ -937,8 +936,8 @@ end
     end
     % Initilize UDP socket - There are now 2 sockets (ports) one for
     % Continuous data and one for TrialByTrialData
-    handles.network.vizContinuousSocket = InitUDPreceiver('127.0.0.1',59124); % Use this port 59124 for CONTINUOUS data % For target PC keep tde correct 49152Â–65535  range!
-    handles.network.vizTrialByTrialSocket = InitUDPreceiver('127.0.0.1',59134); % Use this port 59134 for TRIAL by TRIAL data % For target PC keep tde correct 49152Â–65535  range!
+    handles.network.vizContinuousSocket = InitUDPreceiver('127.0.0.1',59124); % Use this port 59124 for CONTINUOUS data % For target PC keep tde correct 49152–65535  range!
+    handles.network.vizTrialByTrialSocket = InitUDPreceiver('127.0.0.1',59134); % Use this port 59134 for TRIAL by TRIAL data % For target PC keep tde correct 49152–65535  range!
    if (handles.network.vizContinuousSocket<0) || (handles.network.vizTrialByTrialSocket<0)
         disp('ERROR:: Initializing UDP receiver')
     end
@@ -953,36 +952,30 @@ end
         sCoreParams = InitCoreParams;
         %Initial Variants
         [variantParams, variantConfig] = InitVariants();
-        %initialize Neural Model Parameters
-        %handles.neuralModelParams.nEpochs =1; 
-        [neuralModelParams, sCoreParams] = initNeuralModelParams(handles.neuralModelFileName,  sCoreParams);
-        handles.neuralModelParams = neuralModelParams;
-        sCoreParams.neuralModelParams =neuralModelParams;
-        
-%         % If there is a specific patient config 
-%         if ~isempty(handles.sCoreParamConfigFileName)
-%             % We need to add the folder to the path because MATAB limits function name to 63chars!
-%             [configPath sCoreFileNameOnly] = fileparts(handles.sCoreParamConfigFileName);
-%             addpath(configPath);
-%             [sCoreParams, variantConfig] = feval(sCoreFileNameOnly, sCoreParams, variantConfig);
-%             sCoreParams = InitCoreParams_Dependent(sCoreParams);
-%         end
-        % Assign sCoreParams
-        handles.sCoreParams = sCoreParams;
-        FlattenAndTune(sCoreParams, 'sCoreParams',NameTunableParams);
-        assignin('base','sCoreParams',sCoreParams);
-        handles.paramChanged = false;
-
-        %Assign Variants
+         %Assign Variants
         handles.variant.variantParams = variantParams;
         handles.variant.variantConfig = variantConfig;
         [variantParamsFlatNames, variantConfigFlatNames] = NameTunableVariants();
         FlattenAndTuneVariants(variantParams,'variantParams',variantParamsFlatNames);
         FlattenAndTune(variantConfig,'variantConfig',variantConfigFlatNames);
+
+        %initialize Neural Model Parameters
+        %handles.neuralModelParams.nEpochs =1; 
+        [neuralModelParams, sCoreParams] = initModelParams(handles.neuralModelFileName,  sCoreParams, handles.experimentType);
+        handles.neuralModelParams = neuralModelParams;
+        sCoreParams.neuralModelParams =neuralModelParams;
+        
+        % Assign sCoreParams and Variants
+        handles.sCoreParams = sCoreParams;
+        FlattenAndTune(sCoreParams, 'sCoreParams',NameTunableParams);
+        assignin('base','sCoreParams',sCoreParams);
+        handles.paramChanged = false;
         assignin('base','variantParamsFlatNames',variantParamsFlatNames);
         %assignin('base','variantConfigFlatNames',variantConfigFlatNames);
+
         handles.variantChanged = true;
         handles.needsToReCompile = false; %RIZ -> check if false is OK?!?!
+        
         % Update handles structure
         handles = orderfields(handles);
         guidata(hObject, handles);
@@ -991,6 +984,7 @@ end
     function patientSpecificConfiguration(hObject, eventdata, handles)
         %Configure parameters (sCoreParams and Variants) based on patient specific config file
         % This function should only be called if there is a patient specific file
+        % RIZ: IMPROVED - CHECK! NOTHING SHOULD BE HARDCODED! NAMES IN MENU SHOULD CORRESPOND TO VARIANTS AND USE A SELECTOR 
         global sCoreParams;
         
         % Read file
@@ -1006,18 +1000,26 @@ end
         assignin('base','variantParamsFlatNames',variantParamsFlatNames);
             
         % pop Menus - Make selection based on variants
-        possibleFreqLow = [4,8,15,30,65,140,65200,80,30110,1216,0,4865200]; %Poor HACK!!
-        possibleFeaturesInPopMenu = [3,4,5,2,7]; %Poor HACK!! Corresponds to: SmoothBandPower=3, VarianceOfPower=4, Coherence=5, IED=2, LOGBandPower
-        possibleDetectorsInPopMenu = [1,2]; %Poor HACK!! Corresponds to: NeuralModel =1 / NeuralModel Multisite =2
-        possibleStimTypeInPopMenu = [1,3;2,4]; %Poor HACK!! Corresponds to: CONTINUOUS: WHICH_DETECTOR={1,3} / TRIGGER: WHICH_DETECTOR={4,5} / MULTISITE: WHICH_DETECTOR={6,7}
-        set(handles.popFreq,'Value',find(possibleFreqLow==variantConfig.FREQ_LOW));
-        set(handles.popFeature,'Value',find(possibleFeaturesInPopMenu==variantConfig.WHICH_FEATURE));
-        [row, col] = find(possibleStimTypeInPopMenu==variantConfig.STIMULATION_TYPE);
-        set(handles.popStimulationType,'Value', row);
-        set(handles.popDetectorType,'Value',find(possibleDetectorsInPopMenu == variantConfig.WHICH_DETECTOR));
-        set(handles.popStateOutput,'Value',variantConfig.STATEOUTPUT);  %Poor HACK!! Corresponds to: MEAN=1 / UPPERBOUND=2 / LOWERBOUND=3
-        
-        %Call the pop objects callbacks to update the variants
+       % possibleFreqLow = [4,8,15,30,65,140,65200,80,30110,1216,0,4865200,765]; %RIZ: Poor HACK!! - IMPROVE!!!
+        %possibleFeaturesInPopMenu = [3,4,5,2,7,8]; %Poor HACK!! Corresponds to: SmoothBandPower=3, VarianceOfPower=4, Coherence=5, IED=2, LOGBandPower
+        %possibleDetectorsInPopMenu = [1,2]; %Poor HACK!! Corresponds to: NeuralModel =1 / NeuralModel Multisite =2
+        %possibleStimTypeInPopMenu = [1,3;2,4]; %Poor HACK!! Corresponds to: CONTINUOUS: WHICH_DETECTOR={1,3} / TRIGGER: WHICH_DETECTOR={4,5} / MULTISITE: WHICH_DETECTOR={6,7}
+         %set(handles.popFreq,'Value',find(possibleFreqLow==variantConfig.FREQ_LOW));
+        %set(handles.popFeature,'Value',find(possibleFeaturesInPopMenu==variantConfig.WHICH_FEATURE));
+        %[row, col] = find(possibleStimTypeInPopMenu==variantConfig.STIMULATION_TYPE);
+
+        [freqBandName, indFreqInGUI] = selectFrequencyNameFromVariantConfig(variantConfig);
+        set(handles.popFreq, 'Value', indFreqInGUI);
+        [featureName, indFeatureInGUI] = selectFeatureNameFromVariantConfig(variantConfig);
+        set(handles.popFeature, 'Value', indFeatureInGUI);
+        [stimulationType, indStimulationInGUI] = selectStimulationTypeFromVariantConfig(variantConfig);
+        set(handles.popStimulationType,'Value', indStimulationInGUI);
+        [detectorName, indDetectorInGUI] = selectDetectorTypeFromVariantConfig(variantConfig);
+        set(handles.popDetectorType,'Value',indDetectorInGUI);
+        [modelOutput, indModelOutputInGUI] = selectModelOutputFromVariantConfig(variantConfig);
+        set(handles.popStateOutput,'Value',indModelOutputInGUI);  % MEAN=1 / UPPERBOUND=2 / LOWERBOUND=3
+       
+        % Call the pop objects callbacks to update the variants
         popFreq_Callback(handles.popFreq, eventdata, handles);
         handles = guidata(handles.popFreq); %Get the handles back after they were modified
         popFeature_Callback(handles.popFeature, eventdata, handles);
@@ -1048,7 +1050,7 @@ end
         global sCoreParams;
 
        % handles.params.expectedDataWidth = sCoreParams.write.maxSignalsPerStep;% +1;
-        handles.params.streamDepthSamp = sCoreParams.viz.streamDepthSec  / sCoreParams.core.stepPeriod;
+        handles.params.streamDepthSamp = round(sCoreParams.viz.streamDepthSec  / sCoreParams.core.stepPeriod);
         handles.params.packetDepthSamp = sCoreParams.write.broadcastSamp; % / sCoreParams.core.stepPeriod;
         handles.params.numTrialsPerPlot = sCoreParams.viz.numTrialsPerPlot; % default 10 trials (10 points) per plot
        
@@ -1124,8 +1126,8 @@ end
         set(handles.popDetectIfAnyAll,'Value',sCoreParams.decoders.txDetector.anyAll +1); % txDetector.anyAll =0 if ANY / =1 if ALL - in GUI corresponding value is 1/2
 
         %Others
-        handles.average.beforeStimSamples = str2double(get(handles.txtBeforeStimSec,'String')) / sCoreParams.core.stepPeriod;
-        handles.average.afterStimSamples = str2double(get(handles.txtAfterStimSec,'String')) / sCoreParams.core.stepPeriod;
+        handles.average.beforeStimSamples = round(str2double(get(handles.txtBeforeStimSec,'String')) / sCoreParams.core.stepPeriod);
+        handles.average.afterStimSamples = round(str2double(get(handles.txtAfterStimSec,'String')) / sCoreParams.core.stepPeriod);
  %       handles.blockRunning = false;
         handles.stimInfo.nStims = 0;
         handles.stimInfo.nShamStims = 0;
@@ -1470,8 +1472,8 @@ end
             nSame=0;
         elseif timeStamp==timeStampPrev
             disp(['Same - PrevTimesStamp:', num2str(timeStampPrev),' - NewTimeStamp:', num2str(timeStamp)]);
-            if nSame>2
-                btnStop_Callback(handles.btnStop, [], handles); %RIZ:TEST! I DON't KNOW WHY it gets stuck here
+            if nSame>5
+           %     btnStop_Callback(handles.btnStop, [], handles); %RIZ:TEST! I DON't KNOW WHY it gets stuck here
             end
             nSame =nSame+1;
         end
@@ -1762,13 +1764,13 @@ function popFreq_Callback(hObject, eventdata, handles)
     handles.variant.variantConfig = variantConfig;
     handles.sCoreParams = sCoreParams;
     handles.freqBandName = freqBandName;
-    handles.nFreqs = sCoreParams.decoders.txDetector.nFreqs;
     handles.variantChanged = true;
-    guidata(hObject, handles);
     disp(['Selected frequency: ', freqBandName,' corresponds to variantConfig_FREQ_LOW = ', num2str(variantConfig.FREQ_LOW)])
-    if (sCoreParams.decoders.txDetector.nFreqs ~= handles.nFreqs)
+    if ~isfield(handles,'nFreqs') || (sCoreParams.decoders.txDetector.nFreqs ~= handles.nFreqs)
         popFeature_Callback(handles.popFeature, eventdata, handles);
     end
+    handles.nFreqs = sCoreParams.decoders.txDetector.nFreqs;
+    guidata(hObject, handles);
 
 end
 
@@ -2104,7 +2106,7 @@ function txtBeforeStimSec_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of txtBeforeStimSec as text
 %        str2double(get(hObject,'String')) returns contents of txtBeforeStimSec as a double
     global sCoreParams;
-    handles.average.beforeStimSamples = str2double(get(hObject,'String')) / sCoreParams.core.stepPeriod;    
+    handles.average.beforeStimSamples = round(str2double(get(hObject,'String')) / sCoreParams.core.stepPeriod);    
     guidata(hObject, handles);
 end
 
@@ -2194,7 +2196,7 @@ function txtAfterStimSec_Callback(hObject, eventdata, handles)
         set(hObject,'String',num2str(5-str2double(get(handles.txtBeforeStimSec,'String'))));
     end
         
-    handles.average.afterStimSamples = str2double(get(hObject,'String')) / sCoreParams.core.stepPeriod;    
+    handles.average.afterStimSamples = round(str2double(get(hObject,'String')) / sCoreParams.core.stepPeriod);    
     guidata(hObject, handles);
 end
 
@@ -2427,6 +2429,7 @@ function popDetectorType_Callback(hObject, eventdata, handles)
     % Call also stimulator type select to modify stimulator output type for the different detectors
     popStimulationType_Callback(handles.popStimulationType, eventdata, handles);
     handles = guidata(handles.popStimulationType); %Get the handles back after they were modified
+    guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -2753,11 +2756,13 @@ function btnVisualizeFromDValid_Callback(hObject, eventdata, handles)
 % hObject    handle to btnVisualizeFromDValid (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+% RZ: IN THE FUTURE THIS HAS TO BE GENERALIZED FOR DIFFFERENT MODELS
 % Select in Visualization Channels/Pairs the same Channels/Pairs selected to Detect
+if isfield(handles.neuralModelParams,'dValid')
     indSelFeat = find(handles.neuralModelParams.dValid(:,1));
     set(handles.lstVizChannelIndexes,'Value',indSelFeat);
     lstVizChannelIndexes_Callback(handles.lstVizChannelIndexes, eventdata, handles);
+end
 end
 
 
@@ -2775,7 +2780,7 @@ function chkColorPerBand_Callback(hObject, eventdata, handles)
     nEpochs = handles.neuralModelParams.nEpochs;  
     nFreqBands = sCoreParams.decoders.txDetector.nFreqs;
     if isShowColorPerBand >=1 && nFreqBands>1
-        colorVal = repmat([1/nFreqBands:1/nFreqBands:1; 1:-1/nFreqBands:1/nFreqBands; 1,1,1 ]',nEpochs,1);
+        colorVal = repmat([1/nFreqBands:1/nFreqBands:1; 1:-1/nFreqBands:1/nFreqBands; ones(1, nFreqBands)]',nEpochs,1);
         for iFeat=1:nFeat
             indFreq = ceil(iFeat/(nFeat/nEpochs/nFreqBands));
             set(handles.featureTraces(iFeat),'Color',colorVal(indFreq,:));
@@ -2883,11 +2888,13 @@ function txtX0mean_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of txtX0mean as a double
 
     global sCoreParams;
-    
+    % RIZ: WE MAY NEED SOMETHING SPECIFIC FOR CLEAR
     X0mean = str2double(get(hObject,'String'));
     X0std = str2double(get(handles.txtX0std,'String'));
     if ~isempty(X0mean) && ~isnan(X0mean) && ~isempty(X0std) && ~isnan(X0std)
-        handles.neuralModelParams.initialXPre = pdf('normal',handles.neuralModelParams.Xs,X0mean,10.*sqrt(X0std));
+        if isfield( handles.neuralModelParams,'initialXPre')
+            handles.neuralModelParams.initialXPre = pdf('normal',handles.neuralModelParams.Xs,X0mean,10.*sqrt(X0std));
+        end
         sCoreParams.neuralModelParams = handles.neuralModelParams;
         handles.paramChanged = true;
         guidata(hObject, handles);
@@ -2909,7 +2916,9 @@ function txtX0std_Callback(hObject, eventdata, handles)
     X0mean = str2double(get(handles.txtX0mean,'String'));
     X0std = str2double(get(hObject,'String'));
     if ~isempty(X0mean) && ~isnan(X0mean) && ~isempty(X0std) && ~isnan(X0std)
-        handles.neuralModelParams.initialXPre = pdf('normal',handles.neuralModelParams.Xs,X0mean,10.*sqrt(X0std));
+        if isfield( handles.neuralModelParams,'initialXPre')
+            handles.neuralModelParams.initialXPre = pdf('normal',handles.neuralModelParams.Xs,X0mean,10.*sqrt(X0std));
+        end
         sCoreParams.neuralModelParams = handles.neuralModelParams;
         handles.paramChanged = true;
         guidata(hObject, handles);
@@ -2922,12 +2931,14 @@ function btnDetFromDValid_Callback(hObject, eventdata, handles)
 % hObject    handle to btnDetFromDValid (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+% RIZ: WHAT WOULD BE THE EQUIVALENT IN CLEAR? - IN THE FUTURE THIS SHOULD BE A GENERAL "MODEL" CHANNELS SELECTED FIELD
 % Select in Detection Channels/Pairs the same Channels/Pairs that are 1 in dValid
-    indSelFeatAllEpochs = find(handles.neuralModelParams.dValid(:,1));
-    indSelFeat = unique(mod(indSelFeatAllEpochs-1,handles.neuralModelParams.nFeaturesPerEpoch)+1); % keep features with features in any epoch (feat are computed continuously)
-    set(handles.lstDetChannelIndexes,'Value',indSelFeat);
-    lstDetChannelIndexes_Callback(handles.lstDetChannelIndexes, eventdata, handles);
+    if isfield( handles.neuralModelParams,'dValid')
+        indSelFeatAllEpochs = find(handles.neuralModelParams.dValid(:,1));
+        indSelFeat = unique(mod(indSelFeatAllEpochs-1,handles.neuralModelParams.nFeaturesPerEpoch)+1); % keep features with features in any epoch (feat are computed continuously)
+        set(handles.lstDetChannelIndexes,'Value',indSelFeat);
+        lstDetChannelIndexes_Callback(handles.lstDetChannelIndexes, eventdata, handles);
+    end
 end
 
 
