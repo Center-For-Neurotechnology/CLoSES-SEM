@@ -7,7 +7,7 @@ function [sCoreParams, variantConfig, sInputData, sInputTrigger, sMultiTimeInput
 %           if whatToDo = Simulation also create data for simulation
 %
 % 2. freqBandName: Name of frequency band of interest
-%       Options: THETA / ALPHA / BETA / LOWGAMMA / HIGHGAMMA / HIGHGAMMARIPPLE /RIPPLE /LP8HIGHGAMMA
+%       Options: THETA / ALPHA / BETA / LOWGAMMA / HIGHGAMMA / HIGHGAMMARIPPLE /RIPPLE /LP7HIGHGAMMA
 %
 % 3. featureName: Name of Feature to compute and detect - assumes same one is used for signal and baseline - except for IED)
 %       Options: BANDPOWER / SMOOTHBANDPOWER / VARIANCEOFPOWER / COHERENCE / IED (to use Anish code)

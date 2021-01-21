@@ -153,19 +153,20 @@ end
 
 
 %% Net-specific hardware
-sCoreParams.network.pciBus = [4 5 5];
-sCoreParams.network.pciSlot = [0 13 14];
-sCoreParams.network.numNSPs = 1;
+%     %We are USING CLOSES 2 target computer
+%     sCoreParams.network.pciBus = [4 3 0];
+%     sCoreParams.network.pciSlot = [0 3 25];
+%     sCoreParams.network.numNSPs = 1;
 % PROVIDENCE
 % sCoreParams.network.pciBus = [2 3 3];
 % sCoreParams.network.pciSlot = [0 14 15];
 % sCoreParams.network.numNSPs = 1;
 
-% MGH small RIG
+% MGH LARGE RIG - CLoSES 1 target computer
 if strncmpi( getenv('COMPUTERNAME'),'DESKTOP-U2P22ER',length('DESKTOP-U2P22ER'))
-    %We are on the SMALL RIG
-    sCoreParams.network.pciBus = [4 3 0];
-    sCoreParams.network.pciSlot = [0 3 25];
+    % We are using CLoSES 1 (changed RIZ 20210121)
+    sCoreParams.network.pciBus = [4 5 5]; %5
+    sCoreParams.network.pciSlot = [0 13 14]; %12
     sCoreParams.network.numNSPs = 1;
 end
 
@@ -175,6 +176,7 @@ if strncmpi( getenv('COMPUTERNAME'),'DESKTOP-OIQPATQ',length('DESKTOP-OIQPATQ'))
     sCoreParams.network.pciSlot = [0 13 14];
     sCoreParams.network.numNSPs = 1;
 end
+
 %% RIZ: NOT in USE
 %sCoreParams.core.stopSimulation = 0;         % RIZ: NOT IMPLEMENTED - if 1 simulation STOPS (useful to change with button in GUI)
 
