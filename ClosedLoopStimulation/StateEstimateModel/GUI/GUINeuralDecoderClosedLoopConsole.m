@@ -1470,8 +1470,8 @@ end
             nSame=0;
         elseif timeStamp==timeStampPrev
             disp(['Same - PrevTimesStamp:', num2str(timeStampPrev),' - NewTimeStamp:', num2str(timeStamp)]);
-            if nSame>2
-                btnStop_Callback(handles.btnStop, [], handles); %RIZ:TEST! I DON't KNOW WHY it gets stuck here
+            if nSame>20
+       %         btnStop_Callback(handles.btnStop, [], handles); %RIZ:TEST! I DON't KNOW WHY it gets stuck here
             end
             nSame =nSame+1;
         end
