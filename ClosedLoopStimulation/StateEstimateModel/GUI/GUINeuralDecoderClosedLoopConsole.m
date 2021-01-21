@@ -633,7 +633,7 @@ end
         
         %[neuralModelParams, variantConfig, sCoreParams] = initNeuralModelParams(handles.neuralModelFileName, handles.variant.variantConfig, sCoreParams, handles.freqBandName, handles.feature);
 
-        [sCoreParams, variantConfig,  sInputData, sInputTrigger, sMultiTimeInputData, sMultiTimeInputTrigger] = initializationScript('SIMULATION', sCoreParams, handles.freqBandName, handles.feature, handles.experimentType, handles.detectorType, handles.triggerType, handles.experimentType , handles.stateOutput, [],[],[], handles.simulation.typeSimulation, handles.simulation.simulationFileName, handles.variant.variantConfig, handles.neuralModelParams);
+        [sCoreParams, variantConfig,  sInputData, sInputTrigger, sMultiTimeInputData, sMultiTimeInputTrigger] = initializationScript('SIMULATION', sCoreParams, handles.freqBandName, handles.feature, handles.stimulationType, handles.detectorType, handles.triggerType, handles.experimentType , handles.stateOutput, [],[],[], handles.simulation.typeSimulation, handles.simulation.simulationFileName, handles.variant.variantConfig, handles.neuralModelParams);
 
         % Patient Specific Configuration - It is at the end of all the configuration to avoid being overwriten by a default value
         if ~isempty(handles.sCoreParamConfigFileName )
@@ -801,7 +801,7 @@ end
 
         %       [neuralModelParams, variantConfig, sCoreParams] = initNeuralModelParams(handles.neuralModelFileName, handles.variant.variantConfig, sCoreParams, handles.freqBandName, handles.feature);
         % Perhaphs this step is not necessary... but it won't hurt to have it and is exactly like simulation
-        [sCoreParams, variantConfig] = initializationScript('REAL-TIME', sCoreParams, handles.freqBandName, handles.feature, handles.stimulationType, handles.detectorType, handles.triggerType, handles.stateOutput, [],[],[], [], [], handles.variant.variantConfig, handles.neuralModelParams);
+        [sCoreParams, variantConfig] = initializationScript('REAL-TIME', sCoreParams, handles.freqBandName, handles.feature, handles.stimulationType, handles.detectorType, handles.triggerType, handles.experimentType, handles.stateOutput, [],[],[], [], [], handles.variant.variantConfig, handles.neuralModelParams);
         
         % Patient Specific Configuration - It is at the end of all the configuration to avoid being overwriten by a default value
         if ~isempty(handles.sCoreParamConfigFileName )
