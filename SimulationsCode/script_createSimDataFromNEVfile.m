@@ -18,6 +18,9 @@ function script_createSimDataFromNEVfile(fileNameNSx, simMATFileName, channelNam
 %[startBlocksSec, endBlocksSec, indTriggerChannel] = findExperimentTimeToCreateSimulatedDataset(fileNameNSx, startToLookSec)
 
 %% Config
+if ~exist('channelNamesInput','var') 
+    channelNamesInput=[];
+end
 if ~exist('chNumberTrigger','var') 
     chNumberTrigger=[];
 end
@@ -76,7 +79,8 @@ lTime = size(downsampledData,2);
 
 
 % if input is bipolar channels get referential from bipolar name
-if areChNamesBipolar == 1
+allChNamesInNSX = {dataNEV.ElectrodesInfo.Label}';
+if areChNamesBipolar == 1 && ~isempty(channelNamesInput) % bipolar and specified
     splitChNamesBipolar = split(channelNamesInput,{' ','-'});
     if length(size(splitChNamesBipolar))>2 % check if it needs to traspose
         splitChNamesBipolar = split(channelNamesInput',{' ','-'});
@@ -86,12 +90,13 @@ if areChNamesBipolar == 1
     for iCh=1:length(arrChannelNames)
         channelNames{iCh} = arrChannelNames{iCh}; % channelNames are the referential channels (should probably be "contacts")
     end
-else
+elseif ~isempty(channelNamesInput) % referential and specified
     channelNames = channelNamesInput;
+else % all if not specified
+    channelNames = regexprep(allChNamesInNSX,'\W','')';
 end
 
 % Channels of interest
-allChNamesInNSX = {dataNEV.ElectrodesInfo.Label}';
 nChannels = length(channelNames);
 channelNumbersInNSX = zeros(1, nChannels);
 channelNumbersInChannelName = zeros(1, nChannels);

@@ -41,7 +41,7 @@ k = length(model.selectedChannels); % RIZ: I'm not sure about this value! - it i
 %% assign model parameters obtained during training to paramsCLEARmodel
 neuralModelParams.nEpochs = modelInfo.numEpochs; % number of time epochs
 %nFeatures = length(model.selectedLength{k}); 
-nFeatures = model.NchannelsMax{k}; % n Channels max is the maximum number of features used / length(model.selectedChannels{k});
+nFeatures = length(model.selectedChannels{k}); %model.NchannelsMax{k}; % n Channels max is the maximum number of features used / 
 nDataPoints = size(model.NormalDist_mean{k},3); %max([model.selectedLength{k}]);
 
 neuralModelParams.nFeatures = nFeatures;
@@ -61,7 +61,8 @@ neuralModelParams.model_NormalDist_variance = model.NormalDist_variance{k}(1:nFe
 neuralModelParams.model_selectedChannels = model.selectedChannels{k}; % channels are actually features - keep to have the info just in case - but it is missleading!
 neuralModelParams.model_NchannelsMax = model.NchannelsMax{k};
 
-neuralModelParams.dValid = ones(nFeatures,4); % RIZ: THIS IS WRONG!!! BUT THIS INFO IS NOT PRESENT IN THE MODEL!! and the format s ,4 to keep it similar to ECR/MSIT model
+neuralModelParams.dValid = ones(nFeatures,4); % RIZ: THIS MIGHT BE WRONG!!! BUT IT seems that only the first features are used - and  THIS INFO IS NOT PRESENT IN THE MODEL!! and the format s ,4 to keep it similar to ECR/MSIT model
+neuralModelParams.dValid(model.NchannelsMax{k}+1:end,1)=0; %remove the ones not in use
 
 %Update nFeatures and assign to workspace
 sCoreParams.neuralModelParams = neuralModelParams; % Added to be able to send to target

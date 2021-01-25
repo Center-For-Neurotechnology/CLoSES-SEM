@@ -375,7 +375,7 @@ end
         if (handles.paramChanged == true)
             sCoreParams = InitCoreParams_Dependent(sCoreParams);
         end
-        if sCoreParams.decoders.txDetector.nFeatures ~= handles.neuralModelParams.nFeaturesPerEpoch
+        if sCoreParams.decoders.txDetector.nFeaturesUsedInDetection ~= handles.neuralModelParams.nFeaturesPerEpoch
             hWarnDlg = warndlg(['Different Number of selected Features (',num2str(sCoreParams.decoders.txDetector.nFeatures) ,') than Parameters (',num2str(handles.neuralModelParams.nFeaturesPerEpoch),')'],' Wrong Number Features!');
             uiwait(hWarnDlg);
             return;

@@ -19,7 +19,7 @@ k = length(modelOrig.selectedChannels); % RIZ: I'm not sure about this value! - 
 
 %Create model params
 nFeatures = numFeaturesPerEpoch * numEpochs;
-nFeatInModel = min(nFeatures, modelOrig.NchannelsMax{k});
+nFeatInModel = min(nFeatures, length(modelOrig.selectedChannels{k}));
 nDataPoints = size(modelOrig.NormalDist_mean{k},3);
 
 model.NchannelsMax{1} = nFeatInModel;

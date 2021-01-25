@@ -1,4 +1,4 @@
-function [startBlocksSec, endBlocksSec, chNumberTrigger, triggerFromFirstSec] = findExperimentTimeToCreateSimulatedDataset(fileNameNSx, startToLookSec, ainChName)
+function [startBlocksSec, endBlocksSec, chNumberTrigger, triggerFromFirstSec, allChannelNames] = findExperimentTimeToCreateSimulatedDataset(fileNameNSx, startToLookSec, ainChName)
 
 distBetweenBlocksSec = 60; % larger than this in sec is considered 2 blocks
 
@@ -12,7 +12,7 @@ if ~exist('ainChName','var')
 end
 
 % Find electrode name "trig"
-{dataNEV.ElectrodesInfo.Label}'
+allChannelNames = regexprep({dataNEV.ElectrodesInfo.Label},'\W','')'
 chNumberTrigger = find(cellfun(@isempty,strfind({dataNEV.ElectrodesInfo.Label},ainChName))==0)
 
 figure; plot(dataNEV.Data(chNumberTrigger,:))
