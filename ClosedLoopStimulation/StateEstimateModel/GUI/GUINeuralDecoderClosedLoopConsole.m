@@ -870,6 +870,7 @@ end
         global sCoreParams;
 
         tg.stop; % In case it was still running
+        tg.set('CommunicationTimeOut', 50);
           
         %evalin('base','StopWriter');
         %Assign changed variables to workspace

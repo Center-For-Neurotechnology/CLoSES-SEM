@@ -153,10 +153,13 @@ end
 
 
 %% Net-specific hardware
-%     %We are USING CLOSES 2 target computer
-%     sCoreParams.network.pciBus = [4 3 0];
-%     sCoreParams.network.pciSlot = [0 3 25];
-%     sCoreParams.network.numNSPs = 1;
+%     %We are USING CLOSES 2 - Wendyll
+if strncmpi( getenv('COMPUTERNAME'),'OPTIMUSPRIME',length('OPTIMUSPRIME'))
+    sCoreParams.network.pciBus = [4 3 0];
+    sCoreParams.network.pciSlot = [0 3 25];
+    sCoreParams.network.numNSPs = 1;
+end
+
 % PROVIDENCE
 % sCoreParams.network.pciBus = [2 3 3];
 % sCoreParams.network.pciSlot = [0 14 15];
