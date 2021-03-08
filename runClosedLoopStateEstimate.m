@@ -1,7 +1,7 @@
 function runClosedLoopStateEstimate(patientNAME, deciderDIR)
 
-if ~exist('deciderDIR','var'), deciderDIR = 'D:\DeciderData'; end
-if ~exist('patientNAME','var'), patientNAME = 'testCLoSES-SEM'; end
+if ~exist('deciderDIR','var'), deciderDIR = 'F:\DeciderData'; end
+if ~exist('patientNAME','var'), patientNAME = 'testCLoSES-SEMTest'; end
 
 %% Add to Path
 addpath(genpath('ClosedLoopStimulation'))
